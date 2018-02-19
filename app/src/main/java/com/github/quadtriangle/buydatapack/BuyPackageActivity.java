@@ -3,8 +3,9 @@ package com.github.quadtriangle.buydatapack;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Gravity;
 import android.widget.FrameLayout;
@@ -17,17 +18,20 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.stfalcon.smsverifycatcher.SmsVerifyCatcher;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import java.lang.Thread;
 
 import javax.net.ssl.SSLHandshakeException;
 
@@ -81,14 +85,16 @@ public class BuyPackageActivity extends AppCompatActivity {
     private class SelectPackTask extends AsyncTask<Void, Void, Boolean> {
         private int buyTimes;
         private String status;
-        private List<String> items;
+        private JSONObject respJson;
         private MaterialDialog selectPackDialog;
+        private List<String> items = new ArrayList<>();
 
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                items = robiSheba.getPackages();
-            } catch (UnknownHostException e) {
+                respJson = robiSheba.getPackages();
+                return extractPackages();
+            } catch (UnknownHostException | SocketException e) {
                 e.printStackTrace();
                 status = getString(R.string.connect_problem_msg);
             } catch (SocketTimeoutException e) {
@@ -101,7 +107,7 @@ public class BuyPackageActivity extends AppCompatActivity {
                 e.printStackTrace();
                 status = e.toString();
             }
-            return items != null;
+            return false;
         }
 
         @Override
@@ -111,7 +117,7 @@ public class BuyPackageActivity extends AppCompatActivity {
                 selectPack();
             } else {
                 new MaterialDialog.Builder(context)
-                        .content(status)
+                        .content(Html.fromHtml(status))
                         .cancelable(false)
                         .positiveText(R.string.ok)
                         .onPositive((dialog, which) -> finish())
@@ -119,9 +125,29 @@ public class BuyPackageActivity extends AppCompatActivity {
             }
         }
 
-        @Override
-        protected void onCancelled() {
-
+        private boolean extractPackages() throws JSONException {
+            if (respJson.has("success") && respJson.getBoolean("success")) {
+                JSONArray data = respJson.getJSONArray("data");
+                for (int i = 0; i < data.length(); i++) {
+                    items.add(data.getJSONObject(i).getString("plan_id") + " - " +
+                            data.getJSONObject(i).getString("tariff_with_vat"));
+                }
+                Collections.sort(items, (String s1, String s2) -> {
+                            Double d1 = Double.parseDouble(s2.substring(s2.lastIndexOf("Tk. ") + 4));
+                            Double d2 = Double.parseDouble(s1.substring(s1.lastIndexOf("Tk. ") + 4));
+                            return d2.compareTo(d1);
+                        }
+                );
+                return true;
+            } else if (respJson.has("data") &&
+                    respJson.getJSONArray("data").length() == 0) {
+                status = getString(R.string.no_data_msg);
+            } else if (respJson.has("error")) {
+                status = respJson.getString("error");
+            } else {
+                status = respJson.toString();
+            }
+            return false;
         }
 
         private void selectPack() {
@@ -245,7 +271,7 @@ public class BuyPackageActivity extends AppCompatActivity {
                 secret = null;
                 try {
                     status = robiSheba.buyPack(null);
-                } catch (UnknownHostException e) {
+                } catch (UnknownHostException | SocketException e) {
                     e.printStackTrace();
                     status = getString(R.string.connect_problem_msg);
                 } catch (SocketTimeoutException e) {
@@ -272,7 +298,7 @@ public class BuyPackageActivity extends AppCompatActivity {
                 textViewAppend(getString(R.string.requesting_to_buy));
                 try {
                     status = robiSheba.buyPack(secret);
-                } catch (UnknownHostException e) {
+                } catch (UnknownHostException | SocketException e) {
                     e.printStackTrace();
                     status = getString(R.string.connect_problem_msg);
                 } catch (SocketTimeoutException e) {

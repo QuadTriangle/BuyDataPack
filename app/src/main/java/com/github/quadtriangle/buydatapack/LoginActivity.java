@@ -22,8 +22,9 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 
 import javax.net.ssl.SSLHandshakeException;
 
@@ -216,7 +217,7 @@ public class LoginActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... params) {
             try {
                 status = robiSheba.login(mNumber, mPassword);
-            } catch (UnknownHostException e) {
+            } catch (UnknownHostException | SocketException e) {
                 e.printStackTrace();
                 status = getString(R.string.connect_problem_msg);
             } catch (SocketTimeoutException e) {

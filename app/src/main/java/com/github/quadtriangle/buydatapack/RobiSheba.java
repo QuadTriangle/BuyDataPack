@@ -49,13 +49,14 @@ public class RobiSheba {
     private final String VOICE_PACK = "/voice-packages/get-current-voice-package";
     private final String BASE = "https://ecare-app.robi.com.bd/airtel_sc/index.php?r=";
     private final String AUTO_LOGIN_INFO = "http://appsuite.robi.com.bd/airtel_sc/getMsisdn.php";
-    private final PersistentCookieJar cookieJar;
 
-    private RequestBody formBody;
-    public String dataPlan;
-    private SharedPreferences loginPrefs;
-    private SharedPreferences.Editor loginPrefsEd;
     private Context ctx;
+    private RequestBody formBody;
+    private SharedPreferences loginPrefs;
+    private final PersistentCookieJar cookieJar;
+    private SharedPreferences.Editor loginPrefsEd;
+
+    public String dataPlan;
 
     public RobiSheba(Context context) {
         ctx = context;
@@ -95,23 +96,10 @@ public class RobiSheba {
         return status;
     }
 
-    public List<String> getPackages() throws JSONException, IOException {
+    public JSONObject getPackages() throws JSONException, IOException {
         formBuilder("getPack", null, null, null, null);
         String body = getRespBody(BASE + PACKAGES, 15);
-        JSONObject packagesJson = new JSONObject(body);
-        JSONArray data = packagesJson.getJSONArray("data");
-        List<String> items = new ArrayList<>();
-        for (int i = 0; i < data.length(); i++) {
-            items.add(data.getJSONObject(i).getString("plan_id") + " - " +
-                    data.getJSONObject(i).getString("tariff_with_vat"));
-        }
-        Collections.sort(items, (String s1, String s2) -> {
-                    Double d1 = Double.parseDouble(s2.substring(s2.lastIndexOf("Tk. ") + 4));
-                    Double d2 = Double.parseDouble(s1.substring(s1.lastIndexOf("Tk. ") + 4));
-                    return d2.compareTo(d1);
-                }
-        );
-        return items;
+        return new JSONObject(body);
     }
 
     public String buyPack(String secret) throws JSONException, IOException {

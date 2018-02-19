@@ -6,10 +6,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,6 +38,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
@@ -289,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
                 return true;
-            } catch (UnknownHostException e) {
+            } catch (UnknownHostException | SocketException e) {
                 e.printStackTrace();
                 status = getString(R.string.connect_problem_msg);
             } catch (SocketTimeoutException e) {
@@ -309,7 +310,8 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(final Boolean success) {
             dialog.dismiss();
             try {
-                if (success && respJson.getBoolean("success")) {
+                if (success && respJson.has("success")
+                        && respJson.getBoolean("success")) {
                     switch (reqType) {
                         case "rewards":
                             showRewards();
@@ -327,14 +329,18 @@ public class MainActivity extends AppCompatActivity {
                             break;
 
                     }
+                } else if (success && respJson.has("error")) {
+                    status = respJson.getString("error");
+                } else if (success) {
+                    status = respJson.toString();
                 }
             } catch (JSONException e) {
-                status = e.toString();
                 e.printStackTrace();
+                status = e.toString();
             }
             if (status != null) {
                 new MaterialDialog.Builder(context)
-                        .content(status)
+                        .content(Html.fromHtml(status))
                         .cancelable(false)
                         .positiveText(R.string.ok)
                         .show();
