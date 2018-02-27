@@ -58,7 +58,7 @@ public class BuyPackageActivity extends AppCompatActivity {
         Common.setupToolbar(this, true);
         setupView();
         dialog = Common.showIndeterminateProgressDialog(this, R.string.package_title, R.string.retrieving_pack);
-        robiSheba = new RobiSheba(this);
+        robiSheba = new RobiSheba(this, Common.getOperator(this));
         new SelectPackTask().execute((Void) null);
     }
 

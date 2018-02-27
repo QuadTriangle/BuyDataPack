@@ -2,6 +2,7 @@ package com.github.quadtriangle.buydatapack;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -79,5 +80,8 @@ public class Common {
                 .show();
     }
 
-
+    public static String getOperator(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getString("operator", "Airtel");
+    }
 }

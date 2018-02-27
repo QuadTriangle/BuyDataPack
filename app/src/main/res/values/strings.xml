@@ -14,7 +14,7 @@
     <string name="success">success</string>
     <string name="buy_pack_cancelled">Buy pack was cancelled</string>
     <string name="maintenance_msg">server is currently unavailable for a planned maintenance. please try again later.</string>
-    <string name="down_msg">airtel data pack server down. please try again later.</string>
+    <string name="down_msg">Robi data pack server down. please try again later.</string>
     <string name="login_success">Login success</string>
     <string name="trying_login">Trying to login</string>
     <string name="retrieving_pack">Retrieving data packages</string>
@@ -59,7 +59,7 @@
     <string name="auto_login_failed_msg">Possible Reason:\n
         1. Server temporary down.\n
         2. You don\'t have an account.\n
-        3. You haven\'t enable data on Airtel.\n
+        3. You haven\'t enable data on Robi/Airtel.\n
         please, try login using number and password.</string>
     <string name="failed_to_buy_msg">\nFailed: waiting for 10 seconds to avoid misbehave</string>
     <string name="buy_data_pack">Buy Data Pack</string>
@@ -67,7 +67,6 @@
     <string name="menu_items">Menu Items</string>
     <string name="logout">Logout</string>
     <string name="logout_description">Logout from this app</string>
-    <string name="airtel" translatable="false">Airtel</string>
     <string name="getting_ac_balance_msg">Getting account balance</string>
     <string name="get_data_balance_msg">Getting data balance</string>
     <string name="getting_rewards_msg">Getting available offer</string>
@@ -125,4 +124,5 @@
     <string name="server_overloaded_msg">The server is overloaded and can\'t respond.\nOr, your data connection is not working.</string>
     <string name="auto_login_failed">Auto Login Failed</string>
     <string name="no_data_msg">The server didn\'t return any data. Please try again</string>
+    <string name="select_operator">Select Operator</string>
 </resources>

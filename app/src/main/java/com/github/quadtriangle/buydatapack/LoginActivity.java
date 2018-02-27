@@ -34,6 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mNumberView;
     private EditText mPasswordView;
     private MaterialDialog dialog;
+    private MaterialDialog selectOperator;
     private View mainLayout;
     private View loginLayout;
 
@@ -46,13 +47,18 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
-        robiSheba = new RobiSheba(this);
+        robiSheba = new RobiSheba(this, Common.getOperator(this));
         Common.setAppTheme(this);
         setContentView(R.layout.activity_login);
         Common.setupToolbar(this, true);
         setupView();
         setupCustomTabs();
         showChangeLocaleOnFirstStart();
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(Common.setAppLocale(base));
     }
 
     private void showChangeLocaleOnFirstStart() {
@@ -79,9 +85,32 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(Common.setAppLocale(base));
+    private void autoLoginSelectOperator() {
+        String[] items = {"Airtel", "Robi"};
+        selectOperator = new MaterialDialog.Builder(context)
+                .title(R.string.select_operator)
+                .items(items)
+                .cancelable(false)
+                .alwaysCallSingleChoiceCallback()
+                .itemsCallbackSingleChoice(0, (dialog, view, which, text) -> true)
+                .positiveText(R.string.ok)
+                .onPositive((dialog, which) -> {
+                    int index = selectOperator.getSelectedIndex();
+                    robiSheba.setupOperator(items[index]);
+                    setOperator(items[index]);
+                    this.dialog = Common.showIndeterminateProgressDialog(context, R.string.login,
+                            R.string.trying_auto_login);
+                    mAuthTask = new LoginTask(null, null);
+                    mAuthTask.execute((Void) null);
+                })
+                .show();
+    }
+
+    private void setOperator(String operator) {
+        SharedPreferences.Editor prefsEdit = PreferenceManager.
+                getDefaultSharedPreferences(context).edit();
+        prefsEdit.putString("operator", operator);
+        prefsEdit.apply();
     }
 
     private void setupCustomTabs() {
@@ -120,15 +149,24 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void onAutoLoginBtn(View view) {
-        dialog = Common.showIndeterminateProgressDialog(context, R.string.login,
-                R.string.trying_auto_login);
-        mAuthTask = new LoginTask(null, null);
-        mAuthTask.execute((Void) null);
+        autoLoginSelectOperator();
     }
 
     public void onForgotPassBtn(View view) {
-        String url = "https://ecare.robi.com.bd/myairtel/faces/pages/forgetUnPass/forgetPassContainer.jspx";
-        customTabsIntent.launchUrl(this, Uri.parse(url));
+        new MaterialDialog.Builder(context)
+                .content(R.string.select_operator)
+                .positiveText("Airtel")
+                .negativeText("Robi")
+                .onAny((dialog, which) -> {
+                    String url;
+                    if (which.equals(DialogAction.POSITIVE)) {
+                        url = "https://ecare.robi.com.bd/myairtel/faces/pages/forgetUnPass/forgetPassContainer.jspx";
+                    } else {
+                        url = "https://ecare.robi.com.bd/selfcare/faces/forgetUnamePw";
+                    }
+                    customTabsIntent.launchUrl(this, Uri.parse(url));
+                })
+                .show();
     }
 
     public void onRegistrationBtn(View view) {
@@ -137,7 +175,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean isNumberValid(String number) {
-        return number.startsWith("016") && number.length() == 11;
+        return (number.startsWith("016") || number.startsWith("018")) && number.length() == 11;
     }
 
     private boolean isPasswordValid(String password) {
@@ -197,6 +235,8 @@ public class LoginActivity extends AppCompatActivity {
 
             }
             dialog = Common.showIndeterminateProgressDialog(context, R.string.login, R.string.trying_login);
+            String operator = number.startsWith("016") ? "Airtel" : "Robi";
+            setOperator(operator);
             mAuthTask = new LoginTask(number, password);
             mAuthTask.execute((Void) null);
         }

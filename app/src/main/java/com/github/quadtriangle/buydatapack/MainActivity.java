@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         context = this;
         setupCrashHandler();
-        robiSheba = new RobiSheba(this);
+        robiSheba = new RobiSheba(this, Common.getOperator(this));
         Common.setAppTheme(this);
         setContentView(R.layout.activity_main);
         setupView();
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
                 .withActivity(this)
                 .withTextColorRes(R.color.colorAccent)
                 .addProfiles(
-                        new ProfileDrawerItem().withName(R.string.airtel).withEmail(loginPrefs.getString("conn", "")).withIcon(R.drawable.ic_user).withIdentifier(1),
+                        new ProfileDrawerItem().withName(Common.getOperator(this)).withEmail(loginPrefs.getString("conn", "")).withIcon(R.drawable.ic_user).withIdentifier(1),
                         new ProfileSettingDrawerItem().withName(R.string.logout).withDescription(R.string.logout_description).withIcon(R.drawable.ic_logout).withIdentifier(2)
                 )
                 .withOnAccountHeaderListener((view, profile, current) -> {

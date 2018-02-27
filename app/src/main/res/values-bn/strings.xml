@@ -12,8 +12,8 @@
     <string name="choose_theme">থিম</string>
     <string name="success">সফল</string>
     <string name="buy_pack_cancelled">প্যাক কিনা বাদ দেয়া হয়েছে </string>
-    <string name="maintenance_msg">এয়ারটেল এর সার্ভার টি মেরামত করা হচ্ছে। অনুগ্রহ করে পরে আবার চেষ্টা করুন</string>
-    <string name="down_msg">এয়ারটেল ডাটা প্যাক সার্ভার ডাঊন। অনুগ্রহ করে পরে আবার চেষ্টা করুন</string>
+    <string name="maintenance_msg">রবি ডাটা প্যাক সার্ভার টি মেরামত করা হচ্ছে। অনুগ্রহ করে পরে আবার চেষ্টা করুন</string>
+    <string name="down_msg">রবি ডাটা প্যাক সার্ভার ডাঊন। অনুগ্রহ করে পরে আবার চেষ্টা করুন</string>
     <string name="login_success">লগইন সফল</string>
     <string name="trying_login">লগইন করা হচ্ছে</string>
     <string name="retrieving_pack">ডাটা প্যাকগুলো আনা হচ্ছে</string>
@@ -56,9 +56,9 @@
     <string name="forgot_password">পাসওয়ার্ড ভুলে গেছেন</string>
     <string name="back">পিছনে</string>
     <string name="auto_login_failed_msg">সম্ভাব্য কারণঃ\n
-        ১। এয়ারটেল সার্ভার ডাউন।\n
+        ১। রবি সার্ভার ডাউন।\n
         ২। আপনার অ্যাকাউন্ট নেই।\n
-        ৩। আপনি এয়ারটেল এ ডাটা চালু করেন নি।\n
+        ৩। আপনি রবি/এয়ারটেল এ ডাটা চালু করেন নি।\n
         অনুগ্রহ করে, নাম্বার এবং পাসওয়ার্ড ব্যবহার করে লগইন করার চেষ্টা করুন।</string>
     <string name="failed_to_buy_msg">\nব্যর্থঃ 10 সেকেন্ড অপেক্ষা করা হচ্ছে</string>
     <string name="buy_data_pack">ডাটা প্যাক কিনুন</string>
@@ -101,4 +101,5 @@
     <string name="server_overloaded_msg">সার্ভারে ওভারলোড হয়েছে এবং রেসপন্স করতে পারছে না।\nঅথবা, আপনার ইন্টারনেট কানেক্টশন কাজ করছে না।</string>
     <string name="auto_login_failed">অটো লগইন ব্যর্থ</string>
     <string name="no_data_msg">সার্ভার কোনো ডাটা পাঠায় নি। অনুগ্রহ করে আবার চেষ্টা করুন।</string>
+    <string name="select_operator">সিলেক্ট অপারেটর</string>
 </resources>

@@ -36,6 +36,8 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class RobiSheba {
     // Robi Sheba API
+    private String BASE;
+    private String AUTO_LOGIN_INFO;
     private final String LOGIN = "/accounts/login";
     private final String LOGOUT = "/accounts/logout";
     private final String AUTO_LOGIN = "/auto-login/check";
@@ -47,8 +49,10 @@ public class RobiSheba {
     private final String MY_PACKAGE = "/data-packages/my-data-packages";
     private final String BUY_PACKAGE = "/data-packages/activate-data-package";
     private final String VOICE_PACK = "/voice-packages/get-current-voice-package";
-    private final String BASE = "https://ecare-app.robi.com.bd/airtel_sc/index.php?r=";
-    private final String AUTO_LOGIN_INFO = "http://appsuite.robi.com.bd/airtel_sc/getMsisdn.php";
+    private final String AIRTEL_BASE = "https://ecare-app.robi.com.bd/airtel_sc/index.php?r=";
+    private final String ROBI_BASE = "https://ecare-app.robi.com.bd/robi_sc_2_4/index.php?r=";
+    private final String AIRTEL_AUTO_LOGIN_INFO = "http://appsuite.robi.com.bd/airtel_sc/getMsisdn.php";
+    private final String ROBI_AUTO_LOGIN_INFO = "http://appsuite.robi.com.bd/robi_sc_2_4/getMsisdn.php";
 
     private Context ctx;
     private RequestBody formBody;
@@ -58,12 +62,18 @@ public class RobiSheba {
 
     public String dataPlan;
 
-    public RobiSheba(Context context) {
+    public RobiSheba(Context context, String operator) {
         ctx = context;
         loginPrefs = ctx.getSharedPreferences("loginPrefs", MODE_PRIVATE);
         loginPrefsEd = loginPrefs.edit();
         cookieJar =  new PersistentCookieJar(
                 new SetCookieCache(), new SharedPrefsCookiePersistor(ctx));
+        if (operator != null) setupOperator(operator);
+    }
+
+    public void setupOperator(String operator) {
+        BASE = operator.equals("Airtel") ? AIRTEL_BASE : ROBI_BASE;
+        AUTO_LOGIN_INFO = operator.equals("Airtel") ? AIRTEL_AUTO_LOGIN_INFO : ROBI_AUTO_LOGIN_INFO;
     }
 
     public String login(String number, String password) throws JSONException, IOException {
